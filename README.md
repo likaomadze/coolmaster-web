@@ -43,3 +43,4 @@ The platform is designed around:
 See `.env.example` for all required variables.
 # coolmaster-web
 # coolmaster-web
+# coolmaster-web
