@@ -1,0 +1,19 @@
+{
+  "expo": {
+    "name": "AeroFlow HVAC",
+    "slug": "aeroflow-hvac",
+    "scheme": "aeroflow",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0F172A"
+      }
+    },
+    "plugins": ["expo-router", "expo-notifications", "expo-image-picker", "expo-location"]
+  }
+}

@@ -1,0 +1,134 @@
+"use client";
+
+import { useSearchParams } from "next/navigation";
+import { CalendarDays, CheckCircle2, Lock } from "lucide-react";
+import { Suspense, useEffect, useState } from "react";
+import { api } from "@/api/client";
+import { FileUploader } from "@/components/booking/file-uploader";
+import { PricingCalculator } from "@/components/booking/pricing-calculator";
+import { TimeSlotPicker } from "@/components/booking/time-slot-picker";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { useBookingStore } from "@/store/booking-store";
+import { money } from "@/lib/utils";
+import { useI18n } from "@/i18n/i18n";
+import { serviceText } from "@/i18n/service-text";
+import { useAvailability, useServices } from "@/hooks/use-platform-data";
+
+function BookingContent() {
+  const params = useSearchParams();
+  const draft = useBookingStore();
+  const setField = useBookingStore((state) => state.setField);
+  const { locale, t } = useI18n();
+  const { data: services = [], isLoading } = useServices();
+  const [submitting, setSubmitting] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const selected = services.find((service) => service.id === draft.serviceId) ?? services[0];
+  const { data: availability = [], isLoading: availabilityLoading } = useAvailability(draft.date, selected?.id);
+  const selectedText = selected ? serviceText(selected, locale) : { name: t("booking.selectDate"), description: "" };
+
+  useEffect(() => {
+    const service = params.get("service");
+    if (service) setField("serviceId", service);
+  }, [params, setField]);
+
+  useEffect(() => {
+    if (!draft.serviceId && services[0]) setField("serviceId", services[0].id);
+  }, [draft.serviceId, services, setField]);
+
+  async function confirmBooking() {
+    if (!selected) return;
+    setSubmitting(true);
+    setMessage(null);
+    try {
+      await api.post("/bookings/locks", { date: draft.date, time: draft.slot, serviceId: selected.id });
+      await api.post("/bookings", {
+        serviceId: selected.id,
+        scheduledDate: draft.date,
+        scheduledTime: draft.slot,
+        address: draft.address,
+        notes: draft.notes
+      });
+      setMessage("Booking created successfully.");
+    } catch {
+      setMessage("Booking failed. Please sign in and check the selected slot.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <section className="container grid gap-8 py-12 lg:grid-cols-[1fr_360px]">
+      <div className="space-y-6">
+        <div>
+          <p className="font-bold text-cyan">{t("booking.eyebrow")}</p>
+          <h1 className="mt-2 text-4xl font-black">{t("booking.title")}</h1>
+        </div>
+        <Card className="space-y-5">
+          <div className="grid gap-4 md:grid-cols-2">
+            <label className="text-sm font-semibold">
+              {t("booking.service")}
+              <select className="mt-2 h-12 w-full rounded-xl border border-slate-200 bg-white px-4 dark:border-slate-800 dark:bg-slate-950" value={draft.serviceId} onChange={(event) => setField("serviceId", event.target.value)}>
+                {services.map((service) => <option key={service.id} value={service.id}>{serviceText(service, locale).name}</option>)}
+              </select>
+              {isLoading && <span className="mt-2 block text-xs text-slate-500">Loading services...</span>}
+            </label>
+            <label className="text-sm font-semibold">
+              {t("booking.date")}
+              <Input className="mt-2" type="date" value={draft.date} onChange={(event) => setField("date", event.target.value)} />
+            </label>
+          </div>
+          <div>
+            <div className="mb-3 flex items-center gap-2 text-sm font-semibold">
+              <CalendarDays className="h-4 w-4 text-cyan" /> {t("booking.liveSlots")}
+            </div>
+            {availabilityLoading && <p className="mb-2 text-xs font-semibold text-slate-500">Loading availability...</p>}
+            {!availabilityLoading && availability.length === 0 && <p className="mb-2 text-xs font-semibold text-slate-500">Select a service and date to load real slots.</p>}
+            <TimeSlotPicker value={draft.slot} onChange={(slot) => setField("slot", slot)} slots={availability} />
+          </div>
+          <label className="block text-sm font-semibold">
+            {t("booking.address")}
+            <Input className="mt-2" placeholder={t("booking.addressPlaceholder")} value={draft.address} onChange={(event) => setField("address", event.target.value)} />
+          </label>
+          <FileUploader onChange={(files) => setField("photos", files)} />
+          <label className="block text-sm font-semibold">
+            {t("booking.notes")}
+            <textarea className="mt-2 min-h-28 w-full rounded-xl border border-slate-200 bg-white p-4 outline-none focus:border-cyan dark:border-slate-800 dark:bg-slate-950" value={draft.notes} onChange={(event) => setField("notes", event.target.value)} placeholder={t("booking.notesPlaceholder")} />
+          </label>
+        </Card>
+      </div>
+      <div className="space-y-5">
+        <Card className="space-y-4">
+          <div className="flex items-center justify-between">
+            <p className="font-black">{t("booking.summary")}</p>
+            <Lock className="h-4 w-4 text-emerald" />
+          </div>
+          <div className="space-y-2 text-sm text-slate-500">
+            <p className="flex justify-between"><span>{t("booking.service")}</span><strong className="text-slate-900 dark:text-white">{selectedText.name}</strong></p>
+            <p className="flex justify-between"><span>{t("booking.date")}</span><strong className="text-slate-900 dark:text-white">{draft.date || t("booking.selectDate")}</strong></p>
+            <p className="flex justify-between"><span>{t("table.schedule")}</span><strong className="text-slate-900 dark:text-white">{draft.slot || t("booking.selectSlot")}</strong></p>
+            <p className="flex justify-between"><span>{t("booking.photos")}</span><strong className="text-slate-900 dark:text-white">{draft.photos.length}</strong></p>
+          </div>
+          <div className="border-t border-slate-200 pt-4 dark:border-slate-800">
+            <p className="flex items-center justify-between text-lg font-black"><span>{t("booking.total")}</span>{money(Number(selected?.price ?? 0))}</p>
+          </div>
+          <Button className="w-full" disabled={!selected || submitting || !draft.date || !draft.slot || !draft.address} onClick={confirmBooking}>
+            <CheckCircle2 className="h-4 w-4" /> {submitting ? "..." : t("booking.confirm")}
+          </Button>
+          {message && <p className="text-xs font-semibold text-slate-500">{message}</p>}
+          <p className="text-xs text-slate-500">{t("booking.lockNote")}</p>
+        </Card>
+        <PricingCalculator basePrice={Number(selected?.price ?? 0)} />
+      </div>
+    </section>
+  );
+}
+
+export default function BookingPage() {
+  return (
+    <Suspense fallback={<section className="container py-12">Loading booking flow...</section>}>
+      <BookingContent />
+    </Suspense>
+  );
+}
