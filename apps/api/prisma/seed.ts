@@ -6,84 +6,87 @@ const prisma = new PrismaClient();
 const services = [
   {
     slug: "installation",
-    name: "AC Installation",
-    nameKa: "კონდიციონერის მონტაჟი",
-    description: "Certified split and central AC installation with line-set, vacuum, testing and warranty handoff.",
-    descriptionKa: "სერტიფიცირებული სპლიტ და ცენტრალური კონდიციონერის მონტაჟი მაგისტრალით, ვაკუუმირებით, ტესტირებით და გარანტიის გადაცემით.",
-    price: 249,
+    name: "AC installation up to 40 sq.m.",
+    nameKa: "კონდიციონერის მონტაჟი 40 კვ",
+    description: "Installation up to 40 sq.m. costs 200 GEL; concrete or sinkari drilling adds 120 GEL.",
+    descriptionKa: "40 კვ მონტაჟი 200 ლარი; ბეტონის ან სინკარის გახვრეტის შემთხვევაში ემატება 120 ლარი.",
+    price: 200,
     estimatedDuration: 180,
-    image: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=900&q=80"
+    active: true
+  },
+  {
+    slug: "installation-60",
+    name: "AC installation up to 60 sq.m.",
+    nameKa: "კონდიციონერის მონტაჟი 60 კვ",
+    description: "Installation up to 60 sq.m. costs 250 GEL; concrete or sinkari drilling adds 120 GEL.",
+    descriptionKa: "60 კვ მონტაჟი 250 ლარი; ბეტონის ან სინკარის გახვრეტის შემთხვევაში ემატება 120 ლარი.",
+    price: 250,
+    estimatedDuration: 180,
+    active: true
+  },
+  {
+    slug: "installation-80",
+    name: "AC installation up to 80 sq.m.",
+    nameKa: "კონდიციონერის მონტაჟი 80 კვ",
+    description: "Installation up to 80 sq.m. costs 280 GEL; concrete or sinkari drilling adds 120 GEL.",
+    descriptionKa: "80 კვ მონტაჟი 280 ლარი; ბეტონის ან სინკარის გახვრეტის შემთხვევაში ემატება 120 ლარი.",
+    price: 280,
+    estimatedDuration: 180,
+    active: true
+  },
+  {
+    slug: "installation-100",
+    name: "AC installation up to 100 sq.m.",
+    nameKa: "კონდიციონერის მონტაჟი 100 კვ",
+    description: "Installation up to 100 sq.m. costs 350 GEL; concrete or sinkari drilling adds 120 GEL.",
+    descriptionKa: "100 კვ მონტაჟი 350 ლარი; ბეტონის ან სინკარის გახვრეტის შემთხვევაში ემატება 120 ლარი.",
+    price: 350,
+    estimatedDuration: 180,
+    active: true
   },
   {
     slug: "gas-refill",
     name: "Gas Refill",
     nameKa: "ფრეონის შევსება",
-    description: "Leak check and refrigerant refill with pressure balancing and digital readings.",
-    descriptionKa: "გაჟონვის შემოწმება და მაცივარი აგენტის შევსება წნევის დაბალანსებით და ციფრული მაჩვენებლებით.",
-    price: 159,
+    description: "100 grams.",
+    descriptionKa: "100 გრამი.",
+    price: 30,
     estimatedDuration: 75,
-    image: "https://images.unsplash.com/photo-1581091215367-59ab6c4f655f?auto=format&fit=crop&w=900&q=80"
+    active: true
   },
   {
     slug: "cleaning",
     name: "Deep Cleaning",
     nameKa: "ღრმა წმენდა",
-    description: "Indoor unit disassembly, anti-bacterial wash, drain flush and airflow restoration.",
-    descriptionKa: "შიდა ბლოკის დაშლა, ანტიბაქტერიული რეცხვა, დრენაჟის გაწმენდა და ჰაერის ნაკადის აღდგენა.",
-    price: 99,
+    description: "The final price depends on the contamination level and the age of the air conditioner.",
+    descriptionKa: "ფასი დამოკიდებულია დაბინძურებაზე და კონდიციონერის სიძველეზე.",
+    price: 100,
     estimatedDuration: 80,
-    image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=900&q=80"
+    active: true
   },
   {
     slug: "diagnostics",
-    name: "Diagnostics",
-    nameKa: "დიაგნოსტიკა",
+    name: "On-site consultation and diagnostics",
+    nameKa: "კონსულტაცია-დიაგნოსტიკა ადგილზე",
     description: "Electrical, pressure, thermostat and airflow diagnostics with repair recommendations.",
     descriptionKa: "ელექტრო, წნევის, თერმოსტატის და ჰაერის ნაკადის დიაგნოსტიკა შეკეთების რეკომენდაციებით.",
-    price: 89,
+    price: 60,
     estimatedDuration: 60,
-    image: "https://images.unsplash.com/photo-1581092335878-2d9ff86ca2bf?auto=format&fit=crop&w=900&q=80"
+    active: true
   },
   {
     slug: "repair",
     name: "Repair",
     nameKa: "შეკეთება",
-    description: "Fast repair for weak cooling, leaking, strange noise, compressor and board faults.",
-    descriptionKa: "სწრაფი შეკეთება სუსტი გაგრილების, გაჟონვის, უცნაური ხმაურის, კომპრესორის და პლატის პრობლემებზე.",
-    price: 119,
+    description: "Repair cost depends on the damage.",
+    descriptionKa: "შეკეთების ღირებულება დამოკიდებულია დაზიანებაზე.",
+    price: 0,
     estimatedDuration: 120,
-    image: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=900&q=80"
-  },
-  {
-    slug: "emergency-service",
-    name: "Emergency Service",
-    nameKa: "ექტრენული დაკომპლექტება",
-    description: "24/7 urgent AC repair and emergency support with priority dispatch.",
-    descriptionKa: "24/7 ექსტრენული კონდიციონერის შეკეთება და ემერგენსი მხარდაჭერა პრიორიტეტული დისპეტჩერიზაციით.",
-    price: 189,
-    estimatedDuration: 90
-  },
-  {
-    slug: "warranty-inspection",
-    name: "Warranty Inspection",
-    nameKa: "გარანტიის შემოწმება",
-    description: "Annual warranty maintenance check and compliance verification.",
-    descriptionKa: "წლიური გარანტიის მოვლის შემოწმება და შესაბამისობის გადამოწმება.",
-    price: 79,
-    estimatedDuration: 45
-  },
-  {
-    slug: "filter-replacement",
-    name: "Filter Replacement",
-    nameKa: "ფილტრის შეცვლა",
-    description: "AC filter cleaning and replacement with high-efficiency filters.",
-    descriptionKa: "კონდიციონერის ფილტრის წმენდა და შეცვლა მაღალი ეფექტიანობის ფილტრებით.",
-    price: 49,
-    estimatedDuration: 30
+    active: true
   }
 ];
 
-const inactiveServiceSlugs = ["maintenance", "relocation", "emergency-service", "warranty-inspection"];
+const inactiveServiceSlugs = ["maintenance", "relocation", "emergency-service", "warranty-inspection", "filter-replacement"];
 
 async function main() {
   for (const service of services) {

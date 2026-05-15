@@ -1,5 +1,5 @@
 import { BookingStatus } from "@prisma/client";
-import { IsDateString, IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsDateString, IsEnum, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateBookingDto {
   @IsString()
@@ -25,6 +25,10 @@ export class CreateBookingDto {
   @IsOptional()
   @IsString()
   notes?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  concreteDrilling?: boolean;
 }
 
 export class UpdateBookingDto {

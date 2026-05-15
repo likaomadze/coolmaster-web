@@ -12,6 +12,7 @@ export function BookingTable({ scope = "admin" }: { scope?: "admin" | "customer"
   const customerQuery = useMyBookings(scope === "customer");
   const bookings = scope === "admin" ? adminQuery.data ?? [] : customerQuery.data ?? [];
   const isLoading = scope === "admin" ? adminQuery.isLoading : customerQuery.isLoading;
+  const dateFormatter = new Intl.DateTimeFormat(locale === "ka" ? "ka-GE" : "en-US", { year: "numeric", month: "short", day: "numeric" });
 
   return (
     <div className="overflow-hidden rounded-lg border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-950">
@@ -38,9 +39,9 @@ export function BookingTable({ scope = "admin" }: { scope?: "admin" | "customer"
           )}
           {bookings.map((booking) => (
             <tr key={booking.id} className="border-t border-slate-100 dark:border-slate-800">
-              <td className="p-4 font-bold">{booking.id}</td>
+              <td className="p-4 font-bold">#{booking.id.slice(-6).toUpperCase()}</td>
               <td className="p-4">{booking.service ? serviceText(booking.service, locale).name : booking.serviceId}</td>
-              <td className="p-4 text-slate-500">{booking.scheduledDate} · {booking.scheduledTime}</td>
+              <td className="p-4 text-slate-500">{dateFormatter.format(new Date(booking.scheduledDate))} · {booking.scheduledTime}</td>
               <td className="p-4"><StatusBadge status={booking.status} /></td>
               <td className="p-4 font-bold">{money(Number(booking.totalPrice))}</td>
             </tr>

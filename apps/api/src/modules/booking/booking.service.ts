@@ -5,6 +5,7 @@ import { PrismaService } from "../prisma/prisma.service";
 import { CreateBookingDto, UpdateBookingDto } from "./dto";
 
 const DEFAULT_SLOTS = ["08:00", "09:30", "11:00", "13:00", "14:30", "16:00", "18:00"];
+const INSTALLATION_SLUGS = ["installation", "installation-60", "installation-80", "installation-100"];
 
 @Injectable()
 export class BookingService {
@@ -32,6 +33,7 @@ export class BookingService {
 
   async create(customerId: string, dto: CreateBookingDto) {
     const service = await this.prisma.service.findUniqueOrThrow({ where: { id: dto.serviceId } });
+    const drillingPrice = dto.concreteDrilling && INSTALLATION_SLUGS.includes(service.slug) ? 120 : 0;
     return this.prisma.booking.create({
       data: {
         customerId,
@@ -42,7 +44,7 @@ export class BookingService {
         latitude: dto.latitude,
         longitude: dto.longitude,
         notes: dto.notes,
-        totalPrice: service.price,
+        totalPrice: Number(service.price) + drillingPrice,
         status: BookingStatus.PENDING
       }
     });
