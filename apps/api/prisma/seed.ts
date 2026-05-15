@@ -15,16 +15,6 @@ const services = [
     image: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=900&q=80"
   },
   {
-    slug: "maintenance",
-    name: "Maintenance",
-    nameKa: "მოვლა",
-    description: "Seasonal tune-up, coil inspection, electrical checks, drainage service and performance report.",
-    descriptionKa: "სეზონური შემოწმება, რადიატორის ინსპექცია, ელექტრო შემოწმებები, დრენაჟის სერვისი და მუშაობის ანგარიში.",
-    price: 129,
-    estimatedDuration: 90,
-    image: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=900&q=80"
-  },
-  {
     slug: "gas-refill",
     name: "Gas Refill",
     nameKa: "ფრეონის შევსება",
@@ -55,16 +45,6 @@ const services = [
     image: "https://images.unsplash.com/photo-1581092335878-2d9ff86ca2bf?auto=format&fit=crop&w=900&q=80"
   },
   {
-    slug: "relocation",
-    name: "Relocation",
-    nameKa: "გადატანა",
-    description: "Safe AC uninstall, transport prep and reinstallation at the new address.",
-    descriptionKa: "კონდიციონერის უსაფრთხო დემონტაჟი, ტრანსპორტირებისთვის მომზადება და ახალ მისამართზე ხელახლა მონტაჟი.",
-    price: 299,
-    estimatedDuration: 240,
-    image: "https://images.unsplash.com/photo-1604754742629-3e5728249d73?auto=format&fit=crop&w=900&q=80"
-  },
-  {
     slug: "repair",
     name: "Repair",
     nameKa: "შეკეთება",
@@ -73,8 +53,37 @@ const services = [
     price: 119,
     estimatedDuration: 120,
     image: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=900&q=80"
+  },
+  {
+    slug: "emergency-service",
+    name: "Emergency Service",
+    nameKa: "ექტრენული დაკომპლექტება",
+    description: "24/7 urgent AC repair and emergency support with priority dispatch.",
+    descriptionKa: "24/7 ექსტრენული კონდიციონერის შეკეთება და ემერგენსი მხარდაჭერა პრიორიტეტული დისპეტჩერიზაციით.",
+    price: 189,
+    estimatedDuration: 90
+  },
+  {
+    slug: "warranty-inspection",
+    name: "Warranty Inspection",
+    nameKa: "გარანტიის შემოწმება",
+    description: "Annual warranty maintenance check and compliance verification.",
+    descriptionKa: "წლიური გარანტიის მოვლის შემოწმება და შესაბამისობის გადამოწმება.",
+    price: 79,
+    estimatedDuration: 45
+  },
+  {
+    slug: "filter-replacement",
+    name: "Filter Replacement",
+    nameKa: "ფილტრის შეცვლა",
+    description: "AC filter cleaning and replacement with high-efficiency filters.",
+    descriptionKa: "კონდიციონერის ფილტრის წმენდა და შეცვლა მაღალი ეფექტიანობის ფილტრებით.",
+    price: 49,
+    estimatedDuration: 30
   }
 ];
+
+const inactiveServiceSlugs = ["maintenance", "relocation", "emergency-service", "warranty-inspection"];
 
 async function main() {
   for (const service of services) {
@@ -85,9 +94,14 @@ async function main() {
     });
   }
 
+  await prisma.service.updateMany({
+    where: { slug: { in: inactiveServiceSlugs } },
+    data: { active: false }
+  });
+
   const email = process.env.SEED_ADMIN_EMAIL;
   const password = process.env.SEED_ADMIN_PASSWORD;
-  const name = process.env.SEED_ADMIN_NAME ?? "AeroFlow Admin";
+  const name = process.env.SEED_ADMIN_NAME ?? "Coolmaster Admin";
 
   if (email && password) {
     await prisma.user.upsert({

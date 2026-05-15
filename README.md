@@ -1,4 +1,4 @@
-# HVAC SaaS Platform
+# Coolmaster HVAC SaaS Platform
 
 Production-oriented monorepo for an HVAC and air conditioner installation service company.
 
@@ -41,6 +41,3 @@ The platform is designed around:
 ## Environment
 
 See `.env.example` for all required variables.
-# coolmaster-web
-# coolmaster-web
-# coolmaster-web

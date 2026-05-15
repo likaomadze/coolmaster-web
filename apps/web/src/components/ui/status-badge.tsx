@@ -1,6 +1,6 @@
 "use client";
 
-import { BookingStatus } from "@hvac/shared";
+import { BookingStatus } from "@coolmaster/shared";
 import { cn } from "@/lib/utils";
 import { useI18n } from "@/i18n/i18n";
 

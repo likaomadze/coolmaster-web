@@ -18,7 +18,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true, forbidNonWhitelisted: true }));
 
   const swaggerConfig = new DocumentBuilder()
-    .setTitle("AeroFlow HVAC API")
+    .setTitle("Coolmaster HVAC API")
     .setDescription("Booking, CRM, technician, chat, notification, upload and analytics APIs")
     .setVersion("1.0.0")
     .addBearerAuth()

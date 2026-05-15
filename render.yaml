@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: aeroflow-api
+    name: coolmaster-api
     runtime: node
     plan: starter
     buildCommand: npm run render:build

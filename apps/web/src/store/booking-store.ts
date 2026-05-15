@@ -6,6 +6,7 @@ type BookingDraft = {
   slot: string;
   address: string;
   notes: string;
+  concreteDrilling: boolean;
   photos: File[];
   setField: <K extends keyof Omit<BookingDraft, "setField">>(key: K, value: BookingDraft[K]) => void;
   reset: () => void;
@@ -17,7 +18,8 @@ export const useBookingStore = create<BookingDraft>((set) => ({
   slot: "",
   address: "",
   notes: "",
+  concreteDrilling: false,
   photos: [],
   setField: (key, value) => set({ [key]: value } as Partial<BookingDraft>),
-  reset: () => set({ serviceId: "installation", date: "", slot: "", address: "", notes: "", photos: [] })
+  reset: () => set({ serviceId: "installation", date: "", slot: "", address: "", notes: "", concreteDrilling: false, photos: [] })
 }));

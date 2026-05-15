@@ -1,4 +1,4 @@
-import type { BookingStatus, UserRole } from "@hvac/shared";
+import type { BookingStatus, UserRole } from "@coolmaster/shared";
 
 export type ApiUser = {
   id: string;

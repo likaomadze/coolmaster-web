@@ -5,7 +5,7 @@ export default function ProfileScreen() {
     <View style={styles.screen}>
       <Text style={styles.title}>Profile</Text>
       <View style={styles.card}>
-        <Text style={styles.name}>AeroFlow User</Text>
+        <Text style={styles.name}>Coolmaster User</Text>
         <Text style={styles.meta}>Push notifications enabled</Text>
         <Text style={styles.meta}>Email and phone verification ready</Text>
         <Text style={styles.meta}>Offline booking cache enabled</Text>

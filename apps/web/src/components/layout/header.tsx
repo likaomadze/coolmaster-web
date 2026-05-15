@@ -31,7 +31,7 @@ export function Header() {
           <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-white">
             <CalendarCheck className="h-5 w-5" />
           </span>
-          AeroFlow
+          Coolmaster
         </Link>
         <nav className="hidden items-center gap-1 md:flex">
           {visibleNav.map(([label, href]) => (

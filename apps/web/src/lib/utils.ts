@@ -6,5 +6,5 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function money(value: number) {
-  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(Number(value));
+  return `${new Intl.NumberFormat("ka-GE", { maximumFractionDigits: 0 }).format(Number(value))} ₾`;
 }

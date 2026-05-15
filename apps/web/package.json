@@ -1,5 +1,5 @@
 {
-  "name": "@hvac/web",
+  "name": "@coolmaster/web",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
-    "@hvac/shared": "*",
+    "@coolmaster/shared": "*",
     "@tanstack/react-query": "^5.32.0",
     "axios": "^1.6.8",
     "class-variance-authority": "^0.7.0",

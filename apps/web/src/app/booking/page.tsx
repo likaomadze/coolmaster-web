@@ -5,16 +5,18 @@ import { CalendarDays, CheckCircle2, Lock } from "lucide-react";
 import { Suspense, useEffect, useState } from "react";
 import { api } from "@/api/client";
 import { FileUploader } from "@/components/booking/file-uploader";
-import { PricingCalculator } from "@/components/booking/pricing-calculator";
 import { TimeSlotPicker } from "@/components/booking/time-slot-picker";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { serviceCatalog } from "@/data/service-catalog";
 import { useBookingStore } from "@/store/booking-store";
 import { money } from "@/lib/utils";
 import { useI18n } from "@/i18n/i18n";
 import { serviceText } from "@/i18n/service-text";
 import { useAvailability, useServices } from "@/hooks/use-platform-data";
+
+const installationSlugs = ["installation", "installation-60", "installation-80", "installation-100"];
 
 function BookingContent() {
   const params = useSearchParams();
@@ -22,9 +24,13 @@ function BookingContent() {
   const setField = useBookingStore((state) => state.setField);
   const { locale, t } = useI18n();
   const { data: services = [], isLoading } = useServices();
+  const catalog = services.length > 0 ? services : serviceCatalog;
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const selected = services.find((service) => service.id === draft.serviceId) ?? services[0];
+  const selected = catalog.find((service) => service.id === draft.serviceId) ?? catalog[0];
+  const isInstallation = selected ? installationSlugs.includes(selected.slug) : false;
+  const drillingPrice = isInstallation && draft.concreteDrilling ? 120 : 0;
+  const totalPrice = Number(selected?.price ?? 0) + drillingPrice;
   const { data: availability = [], isLoading: availabilityLoading } = useAvailability(draft.date, selected?.id);
   const selectedText = selected ? serviceText(selected, locale) : { name: t("booking.selectDate"), description: "" };
 
@@ -34,8 +40,12 @@ function BookingContent() {
   }, [params, setField]);
 
   useEffect(() => {
-    if (!draft.serviceId && services[0]) setField("serviceId", services[0].id);
-  }, [draft.serviceId, services, setField]);
+    if (!draft.serviceId && catalog[0]) setField("serviceId", catalog[0].id);
+  }, [catalog, draft.serviceId, setField]);
+
+  useEffect(() => {
+    if (!isInstallation && draft.concreteDrilling) setField("concreteDrilling", false);
+  }, [draft.concreteDrilling, isInstallation, setField]);
 
   async function confirmBooking() {
     if (!selected) return;
@@ -48,7 +58,7 @@ function BookingContent() {
         scheduledDate: draft.date,
         scheduledTime: draft.slot,
         address: draft.address,
-        notes: draft.notes
+        notes: draft.concreteDrilling ? `${draft.notes}\n${t("pricing.drilling")} + ${money(120)}`.trim() : draft.notes
       });
       setMessage("Booking created successfully.");
     } catch {
@@ -70,7 +80,7 @@ function BookingContent() {
             <label className="text-sm font-semibold">
               {t("booking.service")}
               <select className="mt-2 h-12 w-full rounded-xl border border-slate-200 bg-white px-4 dark:border-slate-800 dark:bg-slate-950" value={draft.serviceId} onChange={(event) => setField("serviceId", event.target.value)}>
-                {services.map((service) => <option key={service.id} value={service.id}>{serviceText(service, locale).name}</option>)}
+                {catalog.map((service) => <option key={service.id} value={service.id}>{serviceText(service, locale).name}</option>)}
               </select>
               {isLoading && <span className="mt-2 block text-xs text-slate-500">Loading services...</span>}
             </label>
@@ -87,6 +97,12 @@ function BookingContent() {
             {!availabilityLoading && availability.length === 0 && <p className="mb-2 text-xs font-semibold text-slate-500">Select a service and date to load real slots.</p>}
             <TimeSlotPicker value={draft.slot} onChange={(slot) => setField("slot", slot)} slots={availability} />
           </div>
+          {isInstallation && (
+            <label className="flex items-center justify-between gap-4 rounded-lg border border-slate-200 p-4 text-sm font-semibold dark:border-slate-800">
+              <span>{t("pricing.drilling")} <strong className="text-cyan">+{money(120)}</strong></span>
+              <input className="h-5 w-5 accent-cyan" type="checkbox" checked={draft.concreteDrilling} onChange={(event) => setField("concreteDrilling", event.target.checked)} />
+            </label>
+          )}
           <label className="block text-sm font-semibold">
             {t("booking.address")}
             <Input className="mt-2" placeholder={t("booking.addressPlaceholder")} value={draft.address} onChange={(event) => setField("address", event.target.value)} />
@@ -108,10 +124,11 @@ function BookingContent() {
             <p className="flex justify-between"><span>{t("booking.service")}</span><strong className="text-slate-900 dark:text-white">{selectedText.name}</strong></p>
             <p className="flex justify-between"><span>{t("booking.date")}</span><strong className="text-slate-900 dark:text-white">{draft.date || t("booking.selectDate")}</strong></p>
             <p className="flex justify-between"><span>{t("table.schedule")}</span><strong className="text-slate-900 dark:text-white">{draft.slot || t("booking.selectSlot")}</strong></p>
+            {isInstallation && draft.concreteDrilling && <p className="flex justify-between"><span>{t("pricing.drilling")}</span><strong className="text-slate-900 dark:text-white">+{money(120)}</strong></p>}
             <p className="flex justify-between"><span>{t("booking.photos")}</span><strong className="text-slate-900 dark:text-white">{draft.photos.length}</strong></p>
           </div>
           <div className="border-t border-slate-200 pt-4 dark:border-slate-800">
-            <p className="flex items-center justify-between text-lg font-black"><span>{t("booking.total")}</span>{money(Number(selected?.price ?? 0))}</p>
+            <p className="flex items-center justify-between text-lg font-black"><span>{t("booking.total")}</span>{money(totalPrice)}</p>
           </div>
           <Button className="w-full" disabled={!selected || submitting || !draft.date || !draft.slot || !draft.address} onClick={confirmBooking}>
             <CheckCircle2 className="h-4 w-4" /> {submitting ? "..." : t("booking.confirm")}
@@ -119,7 +136,6 @@ function BookingContent() {
           {message && <p className="text-xs font-semibold text-slate-500">{message}</p>}
           <p className="text-xs text-slate-500">{t("booking.lockNote")}</p>
         </Card>
-        <PricingCalculator basePrice={Number(selected?.price ?? 0)} />
       </div>
     </section>
   );

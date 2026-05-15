@@ -11,7 +11,7 @@ export default function BookingScreen() {
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
       <Text style={styles.eyebrow}>Customer app</Text>
-      <Text style={styles.title}>Book HVAC service</Text>
+      <Text style={styles.title}>Book Coolmaster service</Text>
       <Text style={styles.label}>Service</Text>
       <View style={styles.wrap}>
         {services.map((item) => (

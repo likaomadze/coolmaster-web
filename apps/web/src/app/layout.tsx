@@ -6,7 +6,7 @@ import { Footer } from "@/components/layout/footer";
 import { FloatingChat } from "@/components/chat/floating-chat";
 
 export const metadata: Metadata = {
-  title: "AeroFlow HVAC Platform",
+  title: "Coolmaster HVAC Platform",
   description: "Premium AC installation, maintenance, diagnostics and field service management platform.",
   manifest: "/manifest.json"
 };
