@@ -76,7 +76,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section data-reveal className="container py-16">
+      <section className="container py-16">
         <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
           <div>
             <p className="font-bold text-cyan">{t("home.servicesEyebrow")}</p>

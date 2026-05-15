@@ -24,6 +24,11 @@ export function ScrollReveal() {
     elements.forEach((element) => {
       const delay = element.dataset.revealDelay;
       if (delay) element.style.transitionDelay = delay;
+      const rect = element.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.88) {
+        element.classList.add("is-visible");
+        return;
+      }
       observer.observe(element);
     });
 
