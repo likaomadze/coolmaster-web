@@ -67,9 +67,14 @@ export function Header() {
               {t("nav.logout")}
             </Button>
           ) : (
-            <Button variant="secondary" className="hidden md:inline-flex">
-              <Link href="/login">{t("nav.login")}</Link>
-            </Button>
+            <>
+              <Button variant="ghost" className="hidden md:inline-flex">
+                <Link href="/login">{t("nav.login")}</Link>
+              </Button>
+              <Button variant="secondary" className="hidden md:inline-flex">
+                <Link href="/register">{t("register.submit")}</Link>
+              </Button>
+            </>
           )}
           <button aria-label={t("nav.openMenu")} className="grid h-10 w-10 place-items-center rounded-xl border border-slate-200 md:hidden dark:border-slate-800">
             <Menu className="h-5 w-5" />

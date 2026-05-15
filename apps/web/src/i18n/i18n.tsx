@@ -152,7 +152,14 @@ const dictionaries: Record<Locale, Dictionary> = {
     "login.email": "Email",
     "login.password": "Password",
     "login.submit": "Sign in",
-    "login.error": "Login failed. Check your credentials."
+    "login.error": "Login failed. Check your credentials.",
+    "login.noAccount": "Don't have an account?",
+    "register.title": "Create account",
+    "register.subtitle": "Register to confirm bookings and view your cabinet.",
+    "register.name": "Name",
+    "register.submit": "Register",
+    "register.error": "Registration failed. Check the details and try again.",
+    "register.hasAccount": "Already have an account?"
   },
   ka: {
     "nav.services": "სერვისები",
@@ -299,7 +306,14 @@ const dictionaries: Record<Locale, Dictionary> = {
     "login.email": "ელფოსტა",
     "login.password": "პაროლი",
     "login.submit": "შესვლა",
-    "login.error": "შესვლა ვერ მოხერხდა. გადაამოწმეთ მონაცემები."
+    "login.error": "შესვლა ვერ მოხერხდა. გადაამოწმეთ მონაცემები.",
+    "login.noAccount": "ანგარიში არ გაქვთ?",
+    "register.title": "რეგისტრაცია",
+    "register.subtitle": "დარეგისტრირდით ჯავშნის დასადასტურებლად და კაბინეტის სანახავად.",
+    "register.name": "სახელი",
+    "register.submit": "რეგისტრაცია",
+    "register.error": "რეგისტრაცია ვერ მოხერხდა. გადაამოწმეთ მონაცემები და სცადეთ თავიდან.",
+    "register.hasAccount": "უკვე გაქვთ ანგარიში?"
   }
 };
 
