@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { AxiosError } from "axios";
 import { api } from "@/api/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -22,21 +23,26 @@ export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(false);
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function submit(event: FormEvent) {
     event.preventDefault();
     setLoading(true);
-    setError(false);
+    setError("");
     try {
       const { data } = await api.post<RegisterResponse>("/auth/register", { name, email, password });
       window.localStorage.setItem("accessToken", data.accessToken);
       window.localStorage.setItem("refreshToken", data.refreshToken);
       router.push("/dashboard");
       router.refresh();
-    } catch {
-      setError(true);
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        const message = error.response?.data?.message;
+        setError(Array.isArray(message) ? message.join(" ") : message ?? t("register.error"));
+      } else {
+        setError(t("register.error"));
+      }
     } finally {
       setLoading(false);
     }
@@ -51,7 +57,7 @@ export default function RegisterPage() {
           <Input value={name} onChange={(event) => setName(event.target.value)} placeholder={t("register.name")} required />
           <Input value={email} onChange={(event) => setEmail(event.target.value)} type="email" placeholder={t("login.email")} required />
           <Input value={password} onChange={(event) => setPassword(event.target.value)} type="password" placeholder={t("login.password")} minLength={8} required />
-          {error && <p className="text-sm font-semibold text-destructive">{t("register.error")}</p>}
+          {error && <p className="text-sm font-semibold text-destructive">{error}</p>}
           <Button className="w-full" disabled={loading}>{loading ? "..." : t("register.submit")}</Button>
         </form>
         <p className="mt-5 text-center text-sm text-slate-500">

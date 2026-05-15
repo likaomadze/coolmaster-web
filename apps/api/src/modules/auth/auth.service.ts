@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { ConflictException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { JwtService } from "@nestjs/jwt";
 import { Role } from "@prisma/client";
@@ -11,6 +11,8 @@ export class AuthService {
   constructor(private prisma: PrismaService, private jwt: JwtService, private config: ConfigService) {}
 
   async register(dto: RegisterDto) {
+    const existing = await this.prisma.user.findUnique({ where: { email: dto.email } });
+    if (existing) throw new ConflictException("Email is already registered");
     const password = await argon2.hash(dto.password);
     const user = await this.prisma.user.create({ data: { ...dto, password, role: Role.CUSTOMER } });
     return this.sign(user.id, user.email, user.role);
